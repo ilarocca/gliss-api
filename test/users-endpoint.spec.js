@@ -137,7 +137,7 @@ describe("Users Endpoint", () => {
           return db.into("users").insert(testUsers);
         });
 
-        it("responds with 204 and updates the article", () => {
+        it("responds with 204 and updates the user", () => {
           const idToUpdate = 1;
           const updateUser = {
             first_name: "ivan",

@@ -5,6 +5,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const { NODE_ENV } = require("./config");
 const usersRouter = require("./users/users-router");
+const itemsRouter = require("./items/items-router");
+const recipesRouter = require("./recipes/recipes-router");
 
 const app = express();
 
@@ -15,6 +17,8 @@ app.use(helmet());
 app.use(cors());
 
 app.use("/api/users", usersRouter);
+app.use("/api/items", itemsRouter);
+app.use("/api/recipes", recipesRouter);
 
 app.get("/api/", (req, res) => {
   res.json({ ok: true });
