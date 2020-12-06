@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS user_pantry_items;
+DROP TABLE IF EXISTS items;

@@ -37,8 +37,6 @@ usersRouter
       }
     }
 
-    newUser.password = password;
-
     UsersService.insertUser(req.app.get("db"), newUser)
       .then((user) => {
         res

@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS gliss_users;
+DROP TABLE IF EXISTS users;
