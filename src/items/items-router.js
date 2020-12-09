@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const xss = require("xss");
 const ItemsService = require("./items-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const itemsRouter = express.Router();
 const jsonParser = express.json();
@@ -14,7 +15,7 @@ const serializeItem = (item) => ({
   date_created: item.date_created,
 });
 
-// only admin can access get all users
+// only admin can access get all users items
 itemsRouter
   .route("/")
   .get((req, res, next) => {
@@ -47,10 +48,22 @@ itemsRouter
       .catch(next);
   });
 
+itemsRouter.route("/:user_id").get(requireAuth, (req, res, next) => {
+  ItemsService.getAllUserItems(req.app.get("db"), req.params.user_id)
+    .then((items) => {
+      res.json(items.map(serializeItem));
+    })
+    .catch(next);
+});
+
 itemsRouter
-  .route("/:item_id")
-  .all((req, res, next) => {
-    ItemsService.getById(req.app.get("db"), req.params.item_id)
+  .route("/:user_id/:item_id")
+  .all(requireAuth, (req, res, next) => {
+    ItemsService.getUserItem(
+      req.app.get("db"),
+      req.params.user_id,
+      req.params.item_id
+    )
       .then((item) => {
         if (!item) {
           return res.status(404).json({

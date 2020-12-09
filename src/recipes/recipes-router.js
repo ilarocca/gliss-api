@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const xss = require("xss");
 const RecipesService = require("./recipes-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const recipesRouter = express.Router();
 const jsonParser = express.json();
@@ -15,7 +16,7 @@ const serializeRecipe = (recipe) => ({
   date_created: recipe.date_created,
 });
 
-// only admin can access get all users
+// only admin can access get all users recipes
 recipesRouter
   .route("/")
   .get((req, res, next) => {
@@ -49,10 +50,22 @@ recipesRouter
       .catch(next);
   });
 
+recipesRouter.route("/:user_id").get(requireAuth, (req, res, next) => {
+  RecipesService.getAllUserRecipes(req.app.get("db"), req.params.user_id)
+    .then((recipes) => {
+      res.json(recipes.map(serializeRecipe));
+    })
+    .catch(next);
+});
+
 recipesRouter
-  .route("/:recipe_id")
+  .route("/:user_id/:recipe_id")
   .all((req, res, next) => {
-    RecipesService.getById(req.app.get("db"), req.params.recipe_id)
+    RecipesService.getUserRecipe(
+      req.app.get("db"),
+      req.params.user_id,
+      req.params.recipe_id
+    )
       .then((recipe) => {
         if (!recipe) {
           return res.status(404).json({
@@ -86,6 +99,7 @@ recipesRouter
         },
       });
 
+    //img not mandatory
     recipeToUpdate.img = img;
 
     RecipesService.updateRecipe(

@@ -7,6 +7,7 @@ const { NODE_ENV } = require("./config");
 const usersRouter = require("./users/users-router");
 const itemsRouter = require("./items/items-router");
 const recipesRouter = require("./recipes/recipes-router");
+const authRouter = require("./auth/auth-router");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cors());
 app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/recipes", recipesRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/api/", (req, res) => {
   res.json({ ok: true });
@@ -29,7 +31,6 @@ app.use(function errorHandler(error, req, res, next) {
   if (NODE_ENV === "production") {
     response = { error: { message: "server error" } };
   } else {
-    console.log(error);
     response = { message: error.message, error };
   }
   res.status(500).json(response);

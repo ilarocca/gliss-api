@@ -42,13 +42,13 @@ describe("Users Endpoint", () => {
     });
   });
 
-  describe("POST /api/users", () => {
+  describe.only("POST /api/users", () => {
     it("responds with 201 and a new user", () => {
       const newUser = {
         first_name: "Eman",
         last_name: "Tasl",
         username: "resu",
-        password: "1234",
+        password: "12345",
       };
       return supertest(app)
         .post("/api/users")
