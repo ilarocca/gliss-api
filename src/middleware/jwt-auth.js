@@ -2,7 +2,6 @@ const AuthService = require("../auth/auth-service");
 const UsersService = require("../users/users-service");
 
 const requireAuth = async (req, res, next) => {
-  console.log("requireAuth");
   const authToken = req.get("Authorization") || "";
   let token;
 
@@ -14,12 +13,11 @@ const requireAuth = async (req, res, next) => {
 
   try {
     const payload = AuthService.verifyAuthToken(token);
-    if (!payload || payload == undefined) {
+    if (!payload || payload === undefined) {
       return res.status(401).json({ message: "Unauthorized request" });
     }
-
     UsersService.getByUsername(req.app.get("db"), payload.sub).then((user) => {
-      if (!user || !user.username === payload.sub) {
+      if (!user) {
         return res.status(401).json({ message: "Unauthorized request" });
       } else {
         req.user = user;

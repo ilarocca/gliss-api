@@ -1,6 +1,7 @@
 const app = require("../src/app");
 const knex = require("knex");
 const supertest = require("supertest");
+const helpers = require("./test-helpers");
 const { makeUsersArray } = require("./users.fixtures");
 const { expect } = require("chai");
 
@@ -45,8 +46,8 @@ describe("Users Endpoint", () => {
   describe.only("POST /api/users", () => {
     it("responds with 201 and a new user", () => {
       const newUser = {
-        first_name: "Eman",
-        last_name: "Tasl",
+        firstName: "Eman",
+        lastName: "Tasl",
         username: "resu",
         password: "12345",
       };
@@ -54,19 +55,23 @@ describe("Users Endpoint", () => {
         .post("/api/users")
         .send(newUser)
         .expect((res) => {
-          expect(res.body.first_name).to.eql(newUser.first_name);
-          expect(res.body.last_name).to.eql(newUser.last_name);
-          expect(res.body.username).to.eql(newUser.username);
-          expect(res.body).to.have.property("id");
-          expect(res.headers.location).to.eql(`/api/users/${res.body.id}`);
+          const expectedAuthToken = helpers
+            .createAuthToken(newUser)
+            .split(" ")[1];
+          expect(res.body.user.firstName).to.eql(newUser.firstName);
+          expect(res.body.user.lastName).to.eql(newUser.lastName);
+          expect(res.body.user.username).to.eql(newUser.username);
+          expect(res.body.user).to.have.property("id");
+          expect(res.headers.location).to.eql(`/api/users/${res.body.user.id}`);
           const expected = new Intl.DateTimeFormat("en-US").format(new Date());
           const actual = new Intl.DateTimeFormat("en-US").format(
-            new Date(res.body.date_created)
+            new Date(res.body.user.dateCreated)
           );
           expect(actual).to.eql(expected);
+          expect(res.body.authToken).to.equal(expectedAuthToken);
         })
         .then((res) =>
-          supertest(app).get(`/api/users/${res.body.id}`).expect(res.body)
+          supertest(app).get(`/api/users/${res.body.user.id}`).expect(res.body)
         );
     });
   });

@@ -1,20 +1,11 @@
 const path = require("path");
 const express = require("express");
-const xss = require("xss");
 const RecipesService = require("./recipes-service");
 const { requireAuth } = require("../middleware/jwt-auth");
+const { serializeRecipe, camelRecipe } = require("../helpers/serialize");
 
 const recipesRouter = express.Router();
 const jsonParser = express.json();
-
-const serializeRecipe = (recipe) => ({
-  id: recipe.id,
-  recipe_name: xss(recipe.recipe_name),
-  img: recipe.img,
-  url: recipe.url,
-  user_id: recipe.user_id,
-  date_created: recipe.date_created,
-});
 
 // only admin can access get all users recipes
 recipesRouter
@@ -27,9 +18,9 @@ recipesRouter
       })
       .catch(next);
   })
-  .post(jsonParser, (req, res, next) => {
-    const { recipe_name, img, url, user_id } = req.body;
-    const newRecipe = { recipe_name, url, user_id };
+  .post(requireAuth, jsonParser, (req, res, next) => {
+    const { recipeName, img, url, userId } = req.body;
+    const newRecipe = serializeRecipe({ recipeName, url, userId, img });
 
     for (const [key, value] of Object.entries(newRecipe)) {
       if (value == null) {
@@ -38,29 +29,34 @@ recipesRouter
         });
       }
     }
-    newRecipe.img = img;
+
+    if (parseInt(req.user.id) !== parseInt(userId)) {
+      return res.status(401).json({
+        error: { message: "Unauthorized request." },
+      });
+    }
+
+    // newRecipe.img = img;
 
     RecipesService.insertRecipe(req.app.get("db"), newRecipe)
       .then((recipe) => {
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${recipe.id}`))
-          .json(serializeRecipe(recipe));
+          .json(camelRecipe(recipe));
       })
       .catch(next);
   });
 
-recipesRouter.route("/:user_id").get(requireAuth, (req, res, next) => {
-  RecipesService.getAllUserRecipes(req.app.get("db"), req.params.user_id)
-    .then((recipes) => {
-      res.json(recipes.map(serializeRecipe));
-    })
-    .catch(next);
-});
-
 recipesRouter
   .route("/:user_id/:recipe_id")
-  .all((req, res, next) => {
+  .all(requireAuth, (req, res, next) => {
+    console.log(req.params.user_id);
+    if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
+      return res.status(401).json({
+        error: { message: "Unauthorized request." },
+      });
+    }
     RecipesService.getUserRecipe(
       req.app.get("db"),
       req.params.user_id,

@@ -2,7 +2,7 @@ const app = require("../src/app");
 const knex = require("knex");
 const supertest = require("supertest");
 const { makeUsersArray } = require("./users.fixtures");
-const { makeItemsArray } = require("./items.fixtures");
+const { makeItemsArray, camelItemsArray } = require("./items.fixtures");
 const { expect } = require("chai");
 
 describe("Items Endpoint", () => {
@@ -35,6 +35,7 @@ describe("Items Endpoint", () => {
     context("Given there are items in the db", () => {
       const testUsers = makeUsersArray();
       const testItems = makeItemsArray();
+      const camelItems = camelItemsArray();
 
       beforeEach("insert items", () => {
         return db
@@ -46,7 +47,7 @@ describe("Items Endpoint", () => {
       });
 
       it("responds with 200 and all items", () => {
-        return supertest(app).get("/api/items").expect(200, testItems);
+        return supertest(app).get("/api/items").expect(200, camelItems);
       });
     });
   });

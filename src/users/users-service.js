@@ -22,7 +22,6 @@ const UsersService = {
 
     return response;
   },
-
   validateName(name) {
     const response = {};
     if (name.length < 2 || name.length > 20) {
@@ -30,7 +29,6 @@ const UsersService = {
     }
     return response;
   },
-
   validateUserName(username) {
     const response = {};
     if (username.length < 4 || username.length > 25) {
@@ -38,7 +36,6 @@ const UsersService = {
     }
     return response;
   },
-
   validatePassword(password) {
     const response = {};
     if (password.length < 4) {
@@ -46,7 +43,6 @@ const UsersService = {
     }
     return response;
   },
-
   hashPassword(password) {
     return bcrypt.hashSync(password, 10);
   },
@@ -54,7 +50,6 @@ const UsersService = {
   getAllUsers(knex) {
     return knex.select("*").from("users");
   },
-
   insertUser(knex, newUser) {
     return knex
       .insert(newUser)
@@ -64,11 +59,9 @@ const UsersService = {
         return rows[0];
       });
   },
-
   getByUsername(knex, username) {
     return knex("users").where({ username }).first("*");
   },
-
   getById(knex, id) {
     return knex.from("users").select("*").where("id", id).first();
   },
@@ -77,6 +70,13 @@ const UsersService = {
   },
   updateUser(knex, id, newUserFields) {
     return knex("users").where({ id }).update(newUserFields);
+  },
+
+  getAllUserItems(knex, id) {
+    return knex.from("items").select("*").where("user_id", id);
+  },
+  getAllUserRecipes(knex, id) {
+    return knex.from("recipes").select("*").where("user_id", id);
   },
 };
 

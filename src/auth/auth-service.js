@@ -16,7 +16,6 @@ const AuthService = {
   },
 
   verifyAuthToken(token) {
-    console.log("verify");
     return jwt.verify(token, JWT_SECRET, {
       algorithms: ["HS256"],
     });
