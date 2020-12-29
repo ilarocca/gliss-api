@@ -3,6 +3,6 @@ CREATE TABLE users (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   username VARCHAR(50) NOT NULL UNIQUE,
-  password VARCHAR(50),
+  password VARCHAR(500),
   date_created TIMESTAMPTZ NOT NULL DEFAULT now()
 );

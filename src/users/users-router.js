@@ -1,18 +1,19 @@
 const path = require("path");
 const express = require("express");
-const xss = require("xss");
 const UsersService = require("./users-service");
+const AuthService = require("../auth/auth-service");
+const { requireAuth } = require("../middleware/jwt-auth");
+const {
+  serializeUser,
+  serializeItem,
+  serializeRecipe,
+  camelUser,
+  camelItem,
+  camelRecipe,
+} = require("../helpers/serialize");
 
 const usersRouter = express.Router();
 const jsonParser = express.json();
-
-const serializeUser = (user) => ({
-  id: user.id,
-  first_name: xss(user.first_name),
-  last_name: xss(user.last_name),
-  username: xss(user.username),
-  date_created: user.date_created,
-});
 
 // only admin can access get all users
 usersRouter
@@ -26,8 +27,9 @@ usersRouter
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    const { first_name, last_name, username, password } = req.body;
-    const newUser = { first_name, last_name, username, password };
+    const { firstName, lastName, username, password } = req.body;
+    //serialize camelCase to db syntax
+    const newUser = serializeUser({ firstName, lastName, username, password });
 
     for (const [key, value] of Object.entries(newUser)) {
       if (value == null) {
@@ -37,19 +39,52 @@ usersRouter
       }
     }
 
+    // Validate
+    const response = UsersService.validateUserField(newUser);
+
+    if (response.error) {
+      return res.status(400).json({ error: response });
+    }
+
+    // Check if username is available
+    UsersService.getByUsername(req.app.get("db"), newUser.username).then(
+      (user) => {
+        if (user) {
+          console.log(user);
+          return res.json({
+            status: 400,
+            message: "Username is already in use",
+          });
+        }
+      }
+    );
+
+    //Hash password
+    newUser.password = UsersService.hashPassword(newUser.password);
+
+    // Insert & Generate authToken
     UsersService.insertUser(req.app.get("db"), newUser)
       .then((user) => {
+        const subject = user.username;
+        const payload = { user_id: user.id };
+        const authToken = AuthService.generateAuthToken(subject, payload);
+
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${user.id}`))
-          .json(serializeUser(user));
+          .json({ user: camelUser(user), authToken: authToken });
       })
       .catch(next);
   });
 
 usersRouter
   .route("/:user_id")
-  .all((req, res, next) => {
+  .all(requireAuth, (req, res, next) => {
+    if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
+      return res.status(401).json({
+        error: { message: "Unauthorized request." },
+      });
+    }
     UsersService.getById(req.app.get("db"), req.params.user_id)
       .then((user) => {
         if (!user) {
@@ -63,7 +98,7 @@ usersRouter
       .catch(next);
   })
   .get((req, res, next) => {
-    res.json(serializeUser(res.user));
+    res.json(camelUser(res.user));
   })
   .delete((req, res, next) => {
     UsersService.deleteUser(req.app.get("db"), req.params.user_id)
@@ -90,5 +125,31 @@ usersRouter
       })
       .catch(next);
   });
+
+usersRouter.route("/:user_id/items").get(requireAuth, (req, res, next) => {
+  if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
+    return res.status(401).json({
+      error: { message: "Unauthorized request." },
+    });
+  }
+  UsersService.getAllUserItems(req.app.get("db"), req.params.user_id)
+    .then((items) => {
+      res.json(items.map(camelItem));
+    })
+    .catch(next);
+});
+
+usersRouter.route("/:user_id/recipes").get(requireAuth, (req, res, next) => {
+  if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
+    return res.status(401).json({
+      error: { message: "Unauthorized request." },
+    });
+  }
+  UsersService.getAllUserRecipes(req.app.get("db"), req.params.user_id)
+    .then((recipes) => {
+      res.json(recipes.map(camelRecipe));
+    })
+    .catch(next);
+});
 
 module.exports = usersRouter;
