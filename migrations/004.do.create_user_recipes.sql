@@ -3,6 +3,7 @@ CREATE TABLE recipes (
   recipe_name VARCHAR(200) NOT NULL,
   img VARCHAR(250),
   url VARCHAR(250) NOT NULL,
+  ingredients VARCHAR(2500), 
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   date_created TIMESTAMPTZ NOT NULL DEFAULT now()
 );

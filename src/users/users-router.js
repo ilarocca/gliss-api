@@ -22,7 +22,7 @@ usersRouter
     const knexInstance = req.app.get("db");
     UsersService.getAllUsers(knexInstance)
       .then((users) => {
-        res.json(users.map(serializeUser));
+        res.json(users.map(camelUser));
       })
       .catch(next);
   })

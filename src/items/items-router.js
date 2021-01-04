@@ -14,7 +14,7 @@ itemsRouter
     const knexInstance = req.app.get("db");
     ItemsService.getAllItems(knexInstance)
       .then((items) => {
-        res.json(items.map(serializeItem));
+        res.json(items.map(camelItem));
       })
       .catch(next);
   })
@@ -70,8 +70,9 @@ itemsRouter
       })
       .catch(next);
   })
+  //feature not in client use yet
   .get((req, res, next) => {
-    res.json(serializeItem(res.item));
+    res.json(camelItem(res.item));
   })
   .delete((req, res, next) => {
     ItemsService.deleteItem(req.app.get("db"), req.params.item_id)
@@ -80,6 +81,7 @@ itemsRouter
       })
       .catch(next);
   })
+  //feature not in client use yet
   .patch(jsonParser, (req, res, next) => {
     const { item_name, category_id, user_id } = req.body;
     const itemToUpdate = { item_name, category_id, user_id };

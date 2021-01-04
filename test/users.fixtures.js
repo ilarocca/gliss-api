@@ -17,6 +17,26 @@ function makeUsersArray() {
   ];
 }
 
+function camelUsersArray() {
+  return [
+    {
+      id: 1,
+      firstName: "Jon",
+      lastName: "Doe",
+      username: "jdoe",
+      dateCreated: "2029-01-22T16:28:32.615Z",
+    },
+    {
+      id: 2,
+      firstName: "Foo",
+      lastName: "Bar",
+      username: "fbar",
+      dateCreated: "2100-05-22T16:28:32.615Z",
+    },
+  ];
+}
+
 module.exports = {
   makeUsersArray,
+  camelUsersArray,
 };

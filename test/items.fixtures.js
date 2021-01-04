@@ -30,7 +30,7 @@ function camelItemsArray() {
       categoryId: 1,
       dateCreated: "2100-05-22T16:28:32.615Z",
       id: 2,
-      itemName: "rice",
+      item: "rice",
       userId: 1,
     },
   ];

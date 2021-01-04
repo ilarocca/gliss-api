@@ -14,13 +14,19 @@ recipesRouter
     const knexInstance = req.app.get("db");
     RecipesService.getAllRecipes(knexInstance)
       .then((recipes) => {
-        res.json(recipes.map(serializeRecipe));
+        res.json(recipes.map(camelRecipe));
       })
       .catch(next);
   })
   .post(requireAuth, jsonParser, (req, res, next) => {
-    const { recipeName, img, url, userId } = req.body;
-    const newRecipe = serializeRecipe({ recipeName, url, userId, img });
+    const { recipeName, img, url, ingredients, userId } = req.body;
+    const newRecipe = serializeRecipe({
+      recipeName,
+      url,
+      userId,
+      img,
+      ingredients,
+    });
 
     for (const [key, value] of Object.entries(newRecipe)) {
       if (value == null) {

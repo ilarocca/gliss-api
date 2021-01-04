@@ -11,6 +11,7 @@ const camelItem = (item) => ({
 const camelRecipe = (recipe) => ({
   id: recipe.id,
   recipeName: xss(recipe.recipe_name),
+  ingredients: xss(recipe.ingredients),
   img: recipe.img,
   url: recipe.url,
   userId: recipe.user_id,
@@ -35,6 +36,7 @@ const serializeRecipe = (recipe) => ({
   recipe_name: xss(recipe.recipeName),
   img: recipe.img,
   url: recipe.url,
+  ingredients: xss(recipe.ingredients),
   user_id: recipe.userId,
 });
 
