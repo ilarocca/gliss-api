@@ -1,6 +1,6 @@
-# Express Boilerplate!
+# Gliss API
 
-This is a boilerplate project used for starting new projects!
+> The API for a grocery managment application that gathers recipes based on your pantry.
 
 ## Set up
 
