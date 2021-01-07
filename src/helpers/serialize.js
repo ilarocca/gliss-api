@@ -1,5 +1,7 @@
 const xss = require("xss");
 
+//keeps json respones camelCase and db underscore_case
+
 const camelItem = (item) => ({
   id: item.id,
   item: xss(item.item_name),

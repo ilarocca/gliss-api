@@ -85,38 +85,6 @@ describe("Items Endpoint", () => {
     });
   });
 
-  // describe("GET /api/items/:user_id/:item_id", () => {
-  //   context("Given no items", () => {
-  //     it("responds with 404", () => {
-  //       const itemId = 1234567;
-  //       return supertest(app)
-  //         .get(`/api/items/${itemId}`)
-  //         .expect(404, { error: { message: `Item doesn't exist` } });
-  //     });
-  //   });
-
-  //   context("Given there are items in the database", () => {
-  //     const testUsers = makeUsersArray();
-  //     const testItems = makeItemsArray();
-
-  //     beforeEach("insert users", () => {
-  //       return db
-  //         .into("users")
-  //         .insert(testUsers)
-  //         .then(() => {
-  //           return db.into("items").insert(testItems);
-  //         });
-  //     });
-
-  //     it("responds with 200 and specified item", () => {
-  //       const itemId = 1;
-  //       return supertest(app)
-  //         .get(`/api/items/${itemId}`)
-  //         .expect(200, testItems[0]);
-  //     });
-  //   });
-  // });
-
   describe(`DELETE /api/items/:user_id/:item_id`, () => {
     context(`Given no items`, () => {
       const testUsers = makeUsersArray();
@@ -170,38 +138,4 @@ describe("Items Endpoint", () => {
       });
     });
   });
-
-  // describe(`PATCH /api/items/:item_id`, () => {
-  //   context("Given there are items in the database", () => {
-  //     const testUsers = makeUsersArray();
-  //     const testItems = makeItemsArray();
-
-  //     beforeEach("insert users", () => {
-  //       return db
-  //         .into("users")
-  //         .insert(testUsers)
-  //         .then(() => {
-  //           return db.into("items").insert(testItems);
-  //         });
-  //     });
-
-  //     it("responds with 204 and updates the item", () => {
-  //       const idToUpdate = 1;
-  //       const updateItem = {
-  //         item_name: "chicken",
-  //       };
-  //       const expectedItems = {
-  //         ...testItems[idToUpdate - 1],
-  //         ...updateItem,
-  //       };
-  //       return supertest(app)
-  //         .patch(`/api/items/${idToUpdate}`)
-  //         .send(updateItem)
-  //         .expect(204)
-  //         .then((res) =>
-  //           supertest(app).get(`/api/items/${idToUpdate}`).expect(expectedItems)
-  //         );
-  //     });
-  //   });
-  // });
 });

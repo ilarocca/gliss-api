@@ -5,8 +5,6 @@ const AuthService = require("../auth/auth-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 const {
   serializeUser,
-  serializeItem,
-  serializeRecipe,
   camelUser,
   camelItem,
   camelRecipe,
@@ -15,8 +13,8 @@ const {
 const usersRouter = express.Router();
 const jsonParser = express.json();
 
-// only admin can access get all users
 usersRouter
+  // only admin can access get all users
   .route("/")
   .get((req, res, next) => {
     const knexInstance = req.app.get("db");
@@ -50,7 +48,6 @@ usersRouter
     UsersService.getByUsername(req.app.get("db"), newUser.username).then(
       (user) => {
         if (user) {
-          console.log(user);
           return res.json({
             status: 400,
             message: "Username is already in use",
@@ -106,26 +103,9 @@ usersRouter
         res.status(204).end();
       })
       .catch(next);
-  })
-  .patch(jsonParser, (req, res, next) => {
-    const { first_name, last_name, username, password } = req.body;
-    const userToUpdate = { first_name, last_name, username, password };
-
-    const numberOfValues = Object.values(userToUpdate).filter(Boolean).length;
-    if (numberOfValues === 0)
-      return res.status(400).json({
-        error: {
-          message: `Request body must contain either 'First Name', 'Last Name', 'Username' or 'password'`,
-        },
-      });
-
-    UsersService.updateUser(req.app.get("db"), req.params.user_id, userToUpdate)
-      .then((numRowsAffected) => {
-        res.status(204).end();
-      })
-      .catch(next);
   });
 
+//get all user items
 usersRouter.route("/:user_id/items").get(requireAuth, (req, res, next) => {
   if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
     return res.status(401).json({
@@ -139,6 +119,7 @@ usersRouter.route("/:user_id/items").get(requireAuth, (req, res, next) => {
     .catch(next);
 });
 
+//get all user recipes
 usersRouter.route("/:user_id/recipes").get(requireAuth, (req, res, next) => {
   if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
     return res.status(401).json({

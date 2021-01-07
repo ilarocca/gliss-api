@@ -2,7 +2,9 @@ const knex = require("knex");
 const app = require("../src/app");
 const { hashPassword } = require("../src/users/users-service");
 const supertest = require("supertest");
+const helpers = require("./test-helpers");
 const { expect } = require("chai");
+const { makeUsersArray, camelUsersArray } = require("./users.fixtures");
 
 describe("Auth Endpoints", function () {
   let db;
@@ -26,14 +28,14 @@ describe("Auth Endpoints", function () {
     db.raw("TRUNCATE users RESTART IDENTITY CASCADE")
   );
   afterEach("cleanup", () => db.raw("TRUNCATE users RESTART IDENTITY CASCADE"));
-  beforeEach("seed users", () => {
-    const hashed = hashPassword(user.password);
-    user.password = hashed;
-    return db.into("users").insert(user);
-  });
 
   describe("POST /api/auth/login", () => {
-    it("return 200, authToken and user when successful", () => {
+    beforeEach("seed users", () => {
+      const hashed = hashPassword(user.password);
+      user.password = hashed;
+      return db.into("users").insert(user);
+    });
+    it("return 201, authToken and user when successful", () => {
       const requestBody = {
         username: "jdoe",
         password: "123456",
@@ -43,7 +45,7 @@ describe("Auth Endpoints", function () {
         .post("/api/auth/login")
         .set("Content-Type", "application/json")
         .send(requestBody)
-        .expect(200)
+        .expect(201)
         .then((res) => {
           expect(res.body).to.have.property("authToken");
           expect(res.body.user.id).to.equal(user.id);
@@ -52,6 +54,20 @@ describe("Auth Endpoints", function () {
           expect(res.body.user.username).to.equal(user.username);
           expect(res.body.user.password).to.be.undefined;
         });
+    });
+  });
+  describe("GET /api/auth/current-user", () => {
+    const testUsers = makeUsersArray();
+    const camelTestUsers = camelUsersArray();
+    beforeEach("insert users", () => {
+      return db.into("users").insert(testUsers);
+    });
+    it("return 200, and current user when successful", () => {
+      return supertest(app)
+        .get("/api/auth/current-user")
+        .set("Content-Type", "application/json")
+        .set("Authorization", helpers.createAuthToken(testUsers[0]))
+        .expect(200, camelTestUsers[0]);
     });
   });
 });

@@ -18,6 +18,7 @@ recipesRouter
       })
       .catch(next);
   })
+  // add new recipe
   .post(requireAuth, jsonParser, (req, res, next) => {
     const { recipeName, img, url, ingredients, userId } = req.body;
     const newRecipe = serializeRecipe({
@@ -41,9 +42,6 @@ recipesRouter
         error: { message: "Unauthorized request." },
       });
     }
-
-    // newRecipe.img = img;
-
     RecipesService.insertRecipe(req.app.get("db"), newRecipe)
       .then((recipe) => {
         res
@@ -57,7 +55,6 @@ recipesRouter
 recipesRouter
   .route("/:user_id/:recipe_id")
   .all(requireAuth, (req, res, next) => {
-    console.log(req.params.user_id);
     if (parseInt(req.user.id) !== parseInt(req.params.user_id)) {
       return res.status(401).json({
         error: { message: "Unauthorized request." },
@@ -79,36 +76,9 @@ recipesRouter
       })
       .catch(next);
   })
-  .get((req, res, next) => {
-    res.json(serializeRecipe(res.recipe));
-  })
+  // delete user recipe
   .delete((req, res, next) => {
     RecipesService.deleteRecipe(req.app.get("db"), req.params.recipe_id)
-      .then((numRowsAffected) => {
-        res.status(204).end();
-      })
-      .catch(next);
-  })
-  .patch(jsonParser, (req, res, next) => {
-    const { recipe_name, img, url, user_id } = req.body;
-    const recipeToUpdate = { recipe_name, url, user_id };
-
-    const numberOfValues = Object.values(recipeToUpdate).filter(Boolean).length;
-    if (numberOfValues === 0)
-      return res.status(400).json({
-        error: {
-          message: `Request body must contain either 'Recipe Name', 'URL', 'User Id'`,
-        },
-      });
-
-    //img not mandatory
-    recipeToUpdate.img = img;
-
-    RecipesService.updateRecipe(
-      req.app.get("db"),
-      req.params.recipe_id,
-      recipeToUpdate
-    )
       .then((numRowsAffected) => {
         res.status(204).end();
       })

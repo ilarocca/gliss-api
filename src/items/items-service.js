@@ -14,9 +14,7 @@ const ItemsService = {
   getById(knex, id) {
     return knex.from("items").select("*").where("id", id).first();
   },
-  getAllUserItems(knex, id) {
-    return knex.from("items").select("*").where("user_id", id);
-  },
+
   getUserItem(knex, user_id, item_id) {
     return knex
       .from("items")

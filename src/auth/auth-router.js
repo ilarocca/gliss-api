@@ -1,13 +1,13 @@
-const path = require("path");
 const express = require("express");
-const xss = require("xss");
 const UsersService = require("../users/users-service");
 const AuthService = require("./auth-service");
 const { camelUser } = require("../helpers/serialize");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const authRouter = express.Router();
 const jsonParser = express.json();
 
+//get user by username and password
 authRouter.route("/login").post(jsonParser, (req, res, next) => {
   const { username, password } = req.body;
 
@@ -29,8 +29,18 @@ authRouter.route("/login").post(jsonParser, (req, res, next) => {
     const payload = { user_id: user.id };
     const authToken = AuthService.generateAuthToken(subject, payload);
 
-    res.json({ user: camelUser(user), authToken });
+    res.status(201).json({ user: camelUser(user), authToken });
   });
+});
+
+//get current user with authToken
+authRouter.route("/current-user").get(requireAuth, async (req, res, next) => {
+  const user = camelUser(req.user);
+  try {
+    res.json(user);
+  } catch (err) {
+    next({ status: 500, message: err.message });
+  }
 });
 
 module.exports = authRouter;

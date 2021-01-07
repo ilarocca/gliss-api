@@ -18,6 +18,7 @@ itemsRouter
       })
       .catch(next);
   })
+  // add new item
   .post(requireAuth, jsonParser, (req, res, next) => {
     const { item, categoryId, userId } = req.body;
     const newItem = serializeItem({ item, categoryId, userId });
@@ -46,6 +47,7 @@ itemsRouter
       .catch(next);
   });
 
+// grab specific user item
 itemsRouter
   .route("/:user_id/:item_id")
   .all(requireAuth, (req, res, next) => {
@@ -70,31 +72,8 @@ itemsRouter
       })
       .catch(next);
   })
-  //feature not in client use yet
-  .get((req, res, next) => {
-    res.json(camelItem(res.item));
-  })
   .delete((req, res, next) => {
     ItemsService.deleteItem(req.app.get("db"), req.params.item_id)
-      .then((numRowsAffected) => {
-        res.status(204).end();
-      })
-      .catch(next);
-  })
-  //feature not in client use yet
-  .patch(jsonParser, (req, res, next) => {
-    const { item_name, category_id, user_id } = req.body;
-    const itemToUpdate = { item_name, category_id, user_id };
-
-    const numberOfValues = Object.values(itemToUpdate).filter(Boolean).length;
-    if (numberOfValues === 0)
-      return res.status(400).json({
-        error: {
-          message: `Request body must contain either 'Item Name' or changed 'Category'`,
-        },
-      });
-
-    ItemsService.updateItem(req.app.get("db"), req.params.item_id, itemToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();
       })

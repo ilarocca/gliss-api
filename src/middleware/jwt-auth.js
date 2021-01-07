@@ -20,6 +20,7 @@ const requireAuth = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({ message: "Unauthorized request" });
       } else {
+        // sends back user after checking auth
         req.user = user;
         next();
       }
