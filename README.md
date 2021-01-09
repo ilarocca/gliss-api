@@ -1,26 +1,49 @@
-# Gliss API
+# Gliss
 
-> The API for a grocery managment application that gathers recipes based on your pantry.
+> A grocery managment application that gathers recipes based on your pantry.
 
-## Set up
+This repo is the back-end for Gliss. You can see the app live at [https://gliss-client.vercel.app/](https://gliss-client.vercel.app/)
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+The app was designed with both mobile and desktop viewing in mind.
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+To check out the app, you can either sign up or select the demo account.
 
-## Scripts
+## Demo
 
-Start the application `npm start`
+<p><a href="https://gliss-client.vercel.app/" target="_blank">Live Link</a></p>
 
-Start nodemon for the application `npm run dev`
+## Introduction
 
-Run the tests `npm test`
+It can be a daunting task to figure out what to make for dinner each night. Gliss makes viewing your pantry from anywhere easy and privides dinner ideas that you may have never thoughut of with the items that you have.
 
-## Deploying
+## Screenshots
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+<img src="ReadMeScreenshots/Landing.png" alt="Landing Page"/>
+<img src="ReadMeScreenshots/LogIn.png" alt="Log In"/>
+<img src="ReadMeScreenshots/MyPantry.png" alt="My Pantry"/>
+<img src="ReadMeScreenshots/GetRecipes.png" alt="Get Recipes"/>
+<img src="ReadMeScreenshots/MyRecipes.png" alt="MyRecipes"/>
+
+## Technology
+
+#### Back End
+
+- Node and Express
+  - Authentication via JWT
+  - RESTful Api
+- Testing
+  - Supertest (integration)
+  - Mocha and Chai (unit)
+- Database
+  - Postgres
+  - Knex.js - SQL wrapper
+
+#### Testing
+
+- Supertest (integration)
+
+* Mocha and Chai (unit)
+
+#### Production
+
+- Deployed via Heroku

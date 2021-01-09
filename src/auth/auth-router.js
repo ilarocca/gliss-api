@@ -25,6 +25,7 @@ authRouter.route("/login").post(jsonParser, (req, res, next) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid username or password." });
     }
+    console.log(user);
     const subject = user.username;
     const payload = { user_id: user.id };
     const authToken = AuthService.generateAuthToken(subject, payload);
