@@ -18,11 +18,11 @@ It can be a daunting task to figure out what to make for dinner each night. Glis
 
 ## Screenshots
 
-<img src="ReadMeScreenshots/Landing.png" alt="Landing Page"/>
-<img src="ReadMeScreenshots/LogIn.png" alt="Log In"/>
-<img src="ReadMeScreenshots/MyPantry.png" alt="My Pantry"/>
-<img src="ReadMeScreenshots/GetRecipes.png" alt="Get Recipes"/>
-<img src="ReadMeScreenshots/MyRecipes.png" alt="MyRecipes"/>
+<img src="ReadMeImages/Landing.png" alt="Landing Page"/>
+<img src="ReadMeImages/LogIn.png" alt="Log In"/>
+<img src="ReadMeImages/MyPantry.png" alt="My Pantry"/>
+<img src="ReadMeImages/GetRecipes.png" alt="Get Recipes"/>
+<img src="ReadMeImages/MyRecipes.png" alt="MyRecipes"/>
 
 ## Technology
 
