@@ -185,7 +185,7 @@ Authorization: Bearer ${token}
 }
 ```
 
-### POST `/api/users/'
+### POST `/api/users/`
 
 ```js
 // req.header
