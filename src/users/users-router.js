@@ -74,6 +74,7 @@ usersRouter
       .catch(next);
   });
 
+// for future incorporation
 usersRouter
   .route("/:user_id")
   .all(requireAuth, (req, res, next) => {
